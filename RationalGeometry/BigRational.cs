@@ -204,7 +204,7 @@ namespace Sunlighter.RationalGeometry
             return new BigRational(a * b.denominator, b.numerator);
         }
 
-        public static explicit operator BigRational(BigInteger i)
+        public static implicit operator BigRational(BigInteger i)
         {
             return new BigRational(i, BigInteger.One);
         }
