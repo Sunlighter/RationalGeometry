@@ -87,7 +87,7 @@ namespace Sunlighter.RationalGeometry
             return y1 + (y2 - y1) * (x3 - x1) / (x2 - x1);
         }
 
-        private static IntersectionResult Intersect(Line3 line1, Line3 line2)
+        public static IntersectionResult Intersect(Line3 line1, Line3 line2)
         {
             if (line1.IsCoincidentWith(line2))
             {
@@ -114,7 +114,7 @@ namespace Sunlighter.RationalGeometry
             }
         }
 
-        private static IntersectionResult Intersect(Line3 line, Plane3 plane)
+        public static IntersectionResult Intersect(Line3 line, Plane3 plane)
         {
             if (plane.Contains(line))
             {
@@ -137,7 +137,7 @@ namespace Sunlighter.RationalGeometry
             }
         }
 
-        private static IntersectionResult Intersect(Plane3 plane1, Plane3 plane2)
+        public static IntersectionResult Intersect(Plane3 plane1, Plane3 plane2)
         {
             if (plane1.IsCoincidentWith(plane2))
             {
