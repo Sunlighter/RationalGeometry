@@ -6,8 +6,8 @@ namespace Sunlighter.RationalGeometry
 {
     public class Line3
     {
-        private Vertex3 origin;
-        private Vector3 direction;
+        private readonly Vertex3 origin;
+        private readonly Vector3 direction;
 
         public Line3(Vertex3 origin, Vector3 direction)
         {
@@ -15,8 +15,8 @@ namespace Sunlighter.RationalGeometry
             this.direction = direction;
         }
 
-        public Vertex3 Origin { get { return origin; } }
-        public Vector3 Direction { get { return direction; } }
+        public Vertex3 Origin => origin;
+        public Vector3 Direction => direction;
 
         public bool Contains(Vertex3 pt)
         {

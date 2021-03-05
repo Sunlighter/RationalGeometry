@@ -6,8 +6,8 @@ namespace Sunlighter.RationalGeometry
 {
     public class Plane3
     {
-        private Vertex3 origin;
-        private Vector3 normal;
+        private readonly Vertex3 origin;
+        private readonly Vector3 normal;
 
         public Plane3(Vertex3 origin, Vector3 normal)
         {
@@ -15,8 +15,8 @@ namespace Sunlighter.RationalGeometry
             this.normal = normal;
         }
 
-        public Vertex3 Origin { get { return origin; } }
-        public Vector3 Normal { get { return normal; } }
+        public Vertex3 Origin => origin;
+        public Vector3 Normal => normal;
 
         public Plane3 Flip()
         {
@@ -75,7 +75,7 @@ namespace Sunlighter.RationalGeometry
 
         public Plane3 FlipToInclude(Vertex3 pt)
         {
-            if (this.Includes(pt)) return this; else return this.Flip();
+            if (Includes(pt)) return this; else return Flip();
         }
 
         public static Plane3 FromTwoPoints(Vertex3 a, Vertex3 b)

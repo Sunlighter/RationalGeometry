@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 
 namespace Sunlighter.RationalGeometry
 {
@@ -41,25 +42,9 @@ namespace Sunlighter.RationalGeometry
             return new Vector3(a.x - b.x, a.y - b.y, a.z - b.z);
         }
 
-        private static Vertex3 origin = null;
+        private static readonly Lazy<Vertex3> origin = new Lazy<Vertex3>(() => new Vertex3(BigRational.Zero, BigRational.Zero, BigRational.Zero), LazyThreadSafetyMode.ExecutionAndPublication);
 
-        public static Vertex3 Origin
-        {
-            get
-            {
-                if (origin == null)
-                {
-                    lock (typeof(Vertex3))
-                    {
-                        if (origin == null)
-                        {
-                            origin = new Vertex3(BigRational.Zero, BigRational.Zero, BigRational.Zero);
-                        }
-                    }
-                }
-                return origin;
-            }
-        }
+        public static Vertex3 Origin => origin.Value;
 
         public static bool operator ==(Vertex3 a, Vertex3 b)
         {

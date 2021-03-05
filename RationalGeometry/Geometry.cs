@@ -157,7 +157,7 @@ namespace Sunlighter.RationalGeometry
                 Line3 line2 = new Line3(origin2, plane2.Normal);
 
                 Vector3 convergence = line2.Direction.ComponentOrtho(line1.Direction);
-                Vector3 run = line2.Direction.ComponentAlong(line1.Direction);
+                //Vector3 run = line2.Direction.ComponentAlong(line1.Direction);
                 Vector3 p1 = line2.Origin - line1.Origin;
                 Vector3 p2 = line2.Origin + line2.Direction - line1.Origin;
 

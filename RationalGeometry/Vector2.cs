@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
+using System.Threading;
 
 namespace Sunlighter.RationalGeometry
 {
     public class Vector2 : IEquatable<Vector2>
     {
-        private BigRational x;
-        private BigRational y;
+        private readonly BigRational x;
+        private readonly BigRational y;
 
         public Vector2(BigRational x, BigRational y)
         {
@@ -16,8 +17,8 @@ namespace Sunlighter.RationalGeometry
             this.y = y;
         }
 
-        public BigRational X { get { return x; } }
-        public BigRational Y { get { return y; } }
+        public BigRational X => x;
+        public BigRational Y => y;
 
         public static Vector2 operator +(Vector2 a, Vector2 b)
         {
@@ -109,25 +110,9 @@ namespace Sunlighter.RationalGeometry
             return new Vector2(a.x / b, a.y / b);
         }
 
-        private static Vector2 zero = null;
+        private static readonly Lazy<Vector2> zero = new Lazy<Vector2>(() => new Vector2(BigRational.Zero, BigRational.Zero), LazyThreadSafetyMode.ExecutionAndPublication);
 
-        public static Vector2 Zero
-        {
-            get
-            {
-                if (zero == null)
-                {
-                    lock (typeof(Vector2))
-                    {
-                        if (zero == null)
-                        {
-                            zero = new Vector2(BigRational.Zero, BigRational.Zero);
-                        }
-                    }
-                }
-                return zero;
-            }
-        }
+        public static Vector2 Zero => zero.Value;
 
         public static bool operator ==(Vector2 a, Vector2 b)
         {

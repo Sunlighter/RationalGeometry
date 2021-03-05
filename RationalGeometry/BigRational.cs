@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Threading;
 
 namespace Sunlighter.RationalGeometry
 {
@@ -108,8 +109,8 @@ namespace Sunlighter.RationalGeometry
 
     public class BigRational
     {
-        private BigInteger numerator;
-        private BigInteger denominator;
+        private readonly BigInteger numerator;
+        private readonly BigInteger denominator;
 
         public BigRational(BigInteger numerator, BigInteger denominator)
         {
@@ -133,11 +134,11 @@ namespace Sunlighter.RationalGeometry
             this.denominator = denominator;
         }
 
-        public bool IsNegative { get { return numerator < BigInteger.Zero; } }
-        public bool IsZero { get { return numerator.IsZero; } }
+        public bool IsNegative => numerator < BigInteger.Zero;
+        public bool IsZero => numerator.IsZero;
 
-        public BigInteger Numerator { get { return numerator; } }
-        public BigInteger Denominator { get { return denominator; } }
+        public BigInteger Numerator => numerator;
+        public BigInteger Denominator => denominator;
 
         public static BigRational operator +(BigRational a, BigRational b)
         {
@@ -348,25 +349,25 @@ namespace Sunlighter.RationalGeometry
             return new BigRational(BigInteger.Pow(@base.Numerator, expt), BigInteger.Pow(@base.Denominator, expt));
         }
 
-        private static BigRational zero = null;
-        private static void InitZero() { if (zero == null) lock (typeof(BigRational)) { if (zero == null) { zero = new BigRational(BigInteger.Zero, BigInteger.One); } } }
-        public static BigRational Zero { get { InitZero(); return zero; } }
+        private static readonly Lazy<BigRational> zero = new Lazy<BigRational>(() => new BigRational(BigInteger.Zero, BigInteger.One), LazyThreadSafetyMode.ExecutionAndPublication);
 
-        private static BigRational one = null;
-        private static void InitOne() { if (one == null) lock (typeof(BigRational)) { if (one == null) { one = new BigRational(BigInteger.One, BigInteger.One); } } }
-        public static BigRational One { get { InitOne(); return one; } }
+        public static BigRational Zero => zero.Value;
 
-        private static BigRational two = null;
-        private static void InitTwo() { if (two == null) lock (typeof(BigRational)) { if (two == null) { two = new BigRational(2, BigInteger.One); } } }
-        public static BigRational Two { get { InitTwo(); return two; } }
+        private static readonly Lazy<BigRational> one = new Lazy<BigRational>(() => new BigRational(BigInteger.One, BigInteger.One), LazyThreadSafetyMode.ExecutionAndPublication);
 
-        private static BigRational oneHalf = null;
-        private static void InitOneHalf() { if (oneHalf == null) lock (typeof(BigRational)) { if (oneHalf == null) { oneHalf = new BigRational(BigInteger.One, 2); } } }
-        public static BigRational OneHalf { get { InitOneHalf(); return oneHalf; } }
+        public static BigRational One => one.Value;
 
-        private static BigRational minusOne = null;
-        private static void InitMinusOne() { if (minusOne == null) lock (typeof(BigRational)) { if (minusOne == null) { minusOne = new BigRational(BigInteger.MinusOne, BigInteger.One); } } }
-        public static BigRational MinusOne { get { InitMinusOne(); return minusOne; } }
+        private static readonly Lazy<BigRational> two = new Lazy<BigRational>(() => new BigRational(2, BigInteger.One), LazyThreadSafetyMode.ExecutionAndPublication);
+
+        public static BigRational Two => two.Value;
+
+        private static readonly Lazy<BigRational> oneHalf = new Lazy<BigRational>(() => new BigRational(BigInteger.One, 2), LazyThreadSafetyMode.ExecutionAndPublication);
+
+        public static BigRational OneHalf => oneHalf.Value;
+
+        private static readonly Lazy<BigRational> minusOne = new Lazy<BigRational>(() => new BigRational(BigInteger.MinusOne, BigInteger.One), LazyThreadSafetyMode.ExecutionAndPublication);
+
+        public static BigRational MinusOne => minusOne.Value;
 
         public static Tuple<BigRational, int> Normalize(BigRational r)
         {
@@ -379,14 +380,14 @@ namespace Sunlighter.RationalGeometry
             Stack<BigRational> powers = new Stack<BigRational>();
             Stack<int> exponents = new Stack<int>();
 
-            BigRational currentPower = null;
-            int currentExponent = 0;
+            BigRational currentPower;
+            int currentExponent;
 
             int finalExponent = 0;
 
-            if (r < BigRational.One)
+            if (r < One)
             {
-                currentPower = BigRational.OneHalf;
+                currentPower = OneHalf;
                 currentExponent = -1;
 
                 while (r < currentPower)
@@ -410,7 +411,7 @@ namespace Sunlighter.RationalGeometry
             }
             else
             {
-                currentPower = BigRational.Two;
+                currentPower = Two;
                 currentExponent = 1;
 
                 while (r > currentPower)
@@ -433,15 +434,15 @@ namespace Sunlighter.RationalGeometry
                 }
             }
 
-            while (r >= BigRational.Two)
+            while (r >= Two)
             {
-                r /= BigRational.Two;
+                r /= Two;
                 finalExponent += 1;
             }
 
-            while (r < BigRational.One)
+            while (r < One)
             {
-                r *= BigRational.Two;
+                r *= Two;
                 finalExponent -= 1;
             }
 
@@ -462,14 +463,14 @@ namespace Sunlighter.RationalGeometry
             int loops = 53;
             while (expt < 0 && loops > 0)
             {
-                frac /= BigRational.Two;
+                frac /= Two;
                 expt += 1;
                 loops -= 1;
             }
 
-            if (expt <= 0) { expt = 0; frac /= BigRational.Two; }
+            if (expt <= 0) { expt = 0; frac /= Two; }
 
-            if (expt > 2046) return (frac < BigRational.Zero) ? double.NegativeInfinity : double.PositiveInfinity;
+            if (expt > 2046) return (frac < Zero) ? double.NegativeInfinity : double.PositiveInfinity;
 
             long bits = (frac * doubleFractionScale).RoundingOp(m).GetInt64Value(OverflowBehavior.Saturate);
             if (bits < 0) bits = (-bits) | unchecked((long)0x8000000000000000L);
@@ -492,14 +493,14 @@ namespace Sunlighter.RationalGeometry
             int loops = 24;
             while (expt < 0 && loops > 0)
             {
-                frac /= BigRational.Two;
+                frac /= Two;
                 expt += 1;
                 loops -= 1;
             }
 
-            if (expt <= 0) { expt = 0; frac /= BigRational.Two; }
+            if (expt <= 0) { expt = 0; frac /= Two; }
 
-            if (expt > 254) return (frac < BigRational.Zero) ? float.NegativeInfinity : float.PositiveInfinity;
+            if (expt > 254) return (frac < Zero) ? float.NegativeInfinity : float.PositiveInfinity;
 
             int bits = (frac * singleFractionScale).RoundingOp(m).GetInt32Value(OverflowBehavior.Saturate);
             if (bits < 0) bits = (-bits) | unchecked((int)0x80000000L);
